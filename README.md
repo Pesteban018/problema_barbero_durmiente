@@ -53,3 +53,8 @@ class Cliente(threading.Thread):
 ## Video de explicacion
 
 [Hacer clic para haceder a video](https://drive.google.com/file/d/1Bv_bkh8quZ9Ymurjqzo0vZCQ5-nKR88c/view?usp=sharing)
+
+
+## Creador
+Nombre: Esteban Pacheco
+MatrICula: 2021-1076
