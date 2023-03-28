@@ -10,45 +10,57 @@ El problema consiste en una barbería en la que trabaja un barbero que tiene un 
 
 
 ````
-import threading 
-import time 
+import threading
+import time
 import random
 
-clientes = threading.Semaphore(0) 
-sillas = threading.Semaphore(5) 
-mutex = threading.Semaphore(1) 
+MAX_CLIENTES = 5
+clientes = []  
 
-class Barbero(threading.Thread): 
-    def __init__(self): 
-        threading.Thread.__init__(self) 
+sem_clientes = threading.Semaphore(0)
+sem_sillon = threading.Semaphore(0)
+lock = threading.Lock()
+print("Barbero durmiendo...")
+def barbero():
+    while True:
         
-    def run(self): 
-        while True: 
-            clientes.acquire()  
-            sillas.release()    
-            mutex.acquire()     
-            print("El barbero está cortando el pelo de un cliente") 
-            mutex.release()     
-            time.sleep(random.uniform(0.5, 1.5))  
+        sem_clientes.acquire()  
+        lock.acquire()  
+        cliente = clientes.pop(0)
+        lock.release() 
+        print(f"Barbero está cortando el pelo del cliente {cliente}")
+        time.sleep(random.randint(1, 3))  
+        sem_sillon.release()  
+        
+def cliente(num):
+    global clientes
+    time.sleep(random.randint(1, 5)) 
+    print(f"El cliente {num} ha llegado")
+    lock.acquire()  
+    if len(clientes) < MAX_CLIENTES: 
+        clientes.append(num)
+        print(f"El cliente {num} se sienta en la sala de espera")
+        lock.release()  
+        sem_clientes.release() 
+        sem_sillon.acquire()  
+        print(f"El cliente {num} se levanta del sillon")
+    else: 
+        print(f"La sala de espera está llena. El cliente {num} se va")
+        lock.release()  
 
+barbero_hilo = threading.Thread(target=barbero)
 
-class Cliente(threading.Thread): 
-        def __init__(self, id): 
-        threading.Thread.__init__(self) 
-        self.id = id 
-    def run(self): 
-        print(f"El cliente {self.id} ha llegado a la barbería"
-        mutex.acquire()    
-        if sillas.acquire(False): 
-            print(f"El cliente {self.id} está sentado esperando") 
-            clientes.release()    
-            sillas.release()        
-            mutex.release()         
-            clientes.acquire()      
-            print(f"El cliente {self.id} ha salido de la barbería"
-        else:
-            print(f"El cliente {self.id} se fue porque no había sillas de espera")
-            mutex.release()         
+clientes_hilos = [threading.Thread(target=cliente, args=(i,)) for i in range(10)]
+
+barbero_hilo.start()
+for hilo in clientes_hilos:
+    hilo.start()
+
+barbero_hilo.join()
+for hilo in clientes_hilos:
+   clientes_hilos
+    hilo.join()
+       
 
 ````
 ## Video de explicacion
