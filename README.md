@@ -57,4 +57,5 @@ class Cliente(threading.Thread):
 
 ## Creador
 Nombre: Esteban Pacheco
-MatrICula: 2021-1076
+
+Matricula: 2021-1076
